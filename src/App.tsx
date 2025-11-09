@@ -1,4 +1,4 @@
-    import React, { useState } from 'react';
+      import React, { useState } from 'react';
 import Module from './Module';
 import PdfViewer from './PdfViewer';
 import MiniBossChallenge from './MiniBossChallenge';
@@ -17,7 +17,6 @@ const App: React.FC = () => {
   const [completedModules, setCompletedModules] = useState<number[]>([]);
   const [points, setPoints] = useState(0);
 
-  // Handle module completion
   const handleModuleComplete = (moduleId: number, earnedPoints: number) => {
     if (!completedModules.includes(moduleId)) {
       setCompletedModules([...completedModules, moduleId]);
@@ -25,7 +24,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Handle PDF upload and create a new module
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -48,10 +46,7 @@ const App: React.FC = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Gamified PDF Learning App</h1>
       <p>Points: {points}</p>
-
-      <div style={{ margin: '20px 0' }}>
-        <input type="file" accept="application/pdf" onChange={handleFileUpload} />
-      </div>
+      <input type="file" accept="application/pdf" onChange={handleFileUpload} />
 
       {modules.map((mod, index) => (
         <div key={mod.id}>
