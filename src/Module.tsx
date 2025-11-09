@@ -1,4 +1,6 @@
 import React from 'react';
+import QuizChallenge from './QuizChallenge';
+import DragDropChallenge from './DragDropChallenge';
 
 type Challenge = { type: string; [key: string]: any };
 
@@ -22,8 +24,25 @@ const Module: React.FC<ModuleProps> = ({ module, isUnlocked, onComplete }) => {
       <h2>{module.title}</h2>
       <div>{module.content}</div>
       {module.challenges.map((challenge, idx) => {
-        if (challenge.type === 'quiz') return <p key={idx}>Quiz: {challenge.question}</p>;
-        if (challenge.type === 'dragdrop') return <p key={idx}>Drag & Drop Challenge</p>;
+        if (challenge.type === 'quiz')
+          return (
+            <QuizChallenge
+              key={idx}
+              question={challenge.question}
+              options={challenge.options}
+              answer={challenge.answer}
+              onComplete={onComplete}
+            />
+          );
+        if (challenge.type === 'dragdrop')
+          return (
+            <DragDropChallenge
+              key={idx}
+              labels={challenge.labels}
+              dropzones={challenge.dropzones}
+              onComplete={onComplete}
+            />
+          );
         return null;
       })}
       <button onClick={() => onComplete(10)}>Complete Module (+10 points)</button>
