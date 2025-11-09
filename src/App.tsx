@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+    import React, { useState } from 'react';
 import Module from './Module';
 import PdfViewer from './PdfViewer';
-import QuizChallenge from './QuizChallenge';
-import DragDropChallenge from './DragDropChallenge';
 import MiniBossChallenge from './MiniBossChallenge';
 
 type Challenge = { type: string; [key: string]: any };
@@ -14,10 +12,12 @@ type ModuleType = {
   miniBoss?: { description: string };
 };
 
-function App() {
+const App: React.FC = () => {
+  const [modules, setModules] = useState<ModuleType[]>([]);
   const [completedModules, setCompletedModules] = useState<number[]>([]);
   const [points, setPoints] = useState(0);
 
+  // Handle module completion
   const handleModuleComplete = (moduleId: number, earnedPoints: number) => {
     if (!completedModules.includes(moduleId)) {
       setCompletedModules([...completedModules, moduleId]);
@@ -25,37 +25,40 @@ function App() {
     }
   };
 
-  const modules: ModuleType[] = [
-    {
-      id: 1,
-      title: 'Module 1: Sample PDF',
-      content: <PdfViewer file="/vite.svg" />, // replace with actual PDF later
-      challenges: [
-        { type: 'quiz', question: '2+2?', options: ['3','4'], answer: '4' },
-        { type: 'dragdrop', labels: ['A','B'], dropzones: ['B','A'] }
-      ],
-      miniBoss: { description: 'Mini-Boss: Combine previous tasks!' }
-    },
-    {
-      id: 2,
-      title: 'Module 2: Next Section',
-      content: <PdfViewer file="/vite.svg" />,
-      challenges: [
-        { type: 'quiz', question: 'Sky color?', options: ['Blue','Red'], answer: 'Blue' }
-      ]
+  // Handle PDF upload and create a new module
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      const newModule: ModuleType = {
+        id: modules.length + 1,
+        title: `Module ${modules.length + 1}: ${file.name}`,
+        content: <PdfViewer file={url} />,
+        challenges: [
+          { type: 'quiz', question: 'Sample Quiz: 2+2?', options: ['3', '4'], answer: '4' },
+          { type: 'dragdrop', labels: ['A', 'B'], dropzones: ['B', 'A'] }
+        ],
+        miniBoss: { description: 'Mini-Boss: Combine previous tasks!' }
+      };
+      setModules([...modules, newModule]);
     }
-  ];
+  };
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Gamified PDF Learning App</h1>
       <p>Points: {points}</p>
+
+      <div style={{ margin: '20px 0' }}>
+        <input type="file" accept="application/pdf" onChange={handleFileUpload} />
+      </div>
+
       {modules.map((mod, index) => (
         <div key={mod.id}>
           <Module
             module={mod}
             isUnlocked={index === 0 || completedModules.includes(modules[index - 1].id)}
-            onComplete={(earnedPoints: number) => handleModuleComplete(mod.id, earnedPoints)}
+            onComplete={(earnedPoints) => handleModuleComplete(mod.id, earnedPoints)}
           />
           {mod.miniBoss && completedModules.includes(mod.id) && (
             <MiniBossChallenge
@@ -67,6 +70,6 @@ function App() {
       ))}
     </div>
   );
-}
+};
 
 export default App;
